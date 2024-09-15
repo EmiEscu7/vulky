@@ -12,17 +12,6 @@ const DB_NAME = process.env.DB_NAME;
 const DB_USER = process.env.DB_USER;
 const DB_PASS = process.env.DB_PASS;
 
-console.log({
-    user: DB_USER,
-    host: DB_HOST,
-    database: DB_NAME,
-    password: DB_PASS,
-    port: DB_PORT,
-    ssl: {
-        rejectUnauthorized: false, // Para permitir conexiones SSL
-    }
-});
-
 const { Pool } = pkg;
 
 const app = express();
@@ -86,11 +75,14 @@ app.post('/addNewPass', async (req, res) => {
     console.log(app, user_app, pass_app, user_id);
     try {
         const pass = cryptPass(pass_app);
+        const pass_id = uuidv4();
         await pool.query(
             'INSERT INTO PASSES (id, id_user, app, user_app, pass_app) VALUES ($1, $2, $3, $4, $5)',
-            [uuidv4(), user_id, app, user_app, pass]
+            [pass_id, user_id, app, user_app, pass]
         );
-        res.status(201).send('Registro agregado');
+
+        const last_pass = await pool.query('SELECT * FROM PASSES WHERE id = $1', [pass_id])
+        res.status(201).json(last_pass.rows[0]);
     } catch (error) {
         console.error(error);
         res.status(500).send('Error al agregar el registro');
