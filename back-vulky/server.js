@@ -27,7 +27,11 @@ const pool = new Pool({
 });
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: '*', // O especifica la IP o dominio de tu app si es necesario
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type'],
+}));
 app.disable('x-powered-by');
 
 // Ruta para obtener usuarios
