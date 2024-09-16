@@ -145,7 +145,24 @@ app.post('/login', async (req, res) => {
         console.error(error);
         res.status(500).send('Error al iniciar sesion');
     }
-})
+});
+
+app.post('/signin', async (req, res) => {
+    const { user, password, birthdate, name, lastname } = req.body;
+    console.log(user, password, birthdate, name, lastname);
+    try {
+        const user_id = uuidv4();
+        await pool.query(
+            'INSERT INTO USERS (id, name, lastname, birthdate, username, password, profile_pic) VALUES ($1, $2, $3, $4, $5, $6, null)',
+            [user_id, name, lastname, birthdate, user, password]
+        );
+
+        res.status(201).send('User addeded.');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error al agregar el registro');
+    }
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
