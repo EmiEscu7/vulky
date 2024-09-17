@@ -41,7 +41,7 @@ app.get('/users', async (req, res) => {
         res.json(result.rows);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error al obtener usuarios');
+        res.status(500).send('Error getting users.');
     }
 });
 
@@ -53,10 +53,10 @@ app.post('/users', async (req, res) => {
             'INSERT INTO USERS (name, lastname, birthdate, username, password) VALUES ($1, $2, $3, $4, $5)',
             [name, lastname, birthdate, username, password]
         );
-        res.status(201).send('Usuario agregado');
+        res.status(201).send('User added');
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error al agregar usuario');
+        res.status(500).send('Error adding user.');
     }
 });
 
@@ -70,7 +70,7 @@ app.get('/getPassesByUser', async (req, res) => {
         res.json(result.rows);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error al obtener las contraseñas del usuario ' + userId);
+        res.status(500).send('Error obtaining user passwords ' + userId);
     }
 });
 
@@ -89,7 +89,7 @@ app.post('/addNewPass', async (req, res) => {
         res.status(201).json(last_pass.rows[0]);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error al agregar el registro');
+        res.status(500).send('Error adding record.');
     }
 });
 
@@ -99,7 +99,7 @@ app.get('/getInfoPass', async (req, res) => {
         const query = 'SELECT p.* FROM PASSES p where id = $1'
         const result = await pool.query(query, [passId]);
         if(result.rowCount == 0) {
-            res.status(500).send('No se encontró información');
+            res.status(500).send('No information found');
         } else {
             const row = result.rows[0];
             console.log(row.pass_app);
@@ -112,7 +112,7 @@ app.get('/getInfoPass', async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error al obtener la informacion de la contraseña para ' + passId);
+        res.status(500).send('Error obtaining password information for ' + passId);
     }
 })
 
@@ -126,7 +126,7 @@ app.post('/login', async (req, res) => {
     const { user, pass } = req.body;
     try {
         if(!user || !pass) {
-            res.status(500).send('Debe ingresar usuario y contrasenia');
+            res.status(500).send('Wold be put username and password');
         } else {
             const query = `SELECT u.* FROM USERS u WHERE username = '${user.trim()}'`;
             console.log(query);            
@@ -140,14 +140,14 @@ app.post('/login', async (req, res) => {
                 if(row.password.toUpperCase() == pass_hashed.toUpperCase()) {
                     res.json({'userId': row.id});
                 } else {
-                    res.status(500).send('La contrasenia es incorrecta');
+                    res.status(500).send('Incorrect password.');
                 }
             }
             
         }
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error al iniciar sesion');
+        res.status(500).send('Error when login.');
     }
 });
 
@@ -161,10 +161,17 @@ app.post('/signin', async (req, res) => {
             [user_id, name.trim(), lastname.trim(), birthdate.trim(), user.trim(), password.trim()]
         );
 
-        res.status(201).json({'ok': true});
+        res.status(200).json({message: 'User added.'});
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error al agregar el registro');
+        // Verificar si el error es por clave única duplicada
+        if (error.code === '23505') {
+            res.status(400).json({ error: 'Username has already exist.' });
+        } else {
+            console.error(error);
+            res.status(500).json({error: 'Error when added user.'});
+        }
+        res.status(500).send({error: 'Error when added user.'});
     }
 });
 
