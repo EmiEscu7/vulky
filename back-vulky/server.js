@@ -127,26 +127,26 @@ app.post('/login', async (req, res) => {
     console.log(`/login, user=${user}, pass=${pass}`)
     try {
         if(!user || !pass) {            
-            res.status(500).json({error: 'Wold be put username and password'});
+            res.status(500).json({'error': 'Wold be put username and password'});
         } else {
             const query = `SELECT u.* FROM USERS u WHERE username = '${user.trim()}'`;
             const result = await pool.query(query);
             if(result.rowCount == 0) {
-                res.status(500).json({error: 'No se encontró el usuario: ' + user});
+                res.status(500).json({'error': 'No se encontró el usuario: ' + user});
             } else {
                 const pass_hashed = hashPass(pass);
                 const row = result.rows[0];
                 if(row.password.toUpperCase() == pass_hashed.toUpperCase()) {
                     res.json({'userId': row.id});
                 } else {
-                    res.status(500).json({error: 'Incorrect password.'});
+                    res.status(500).json({'error': 'Incorrect password.'});
                 }
             }
             
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({error: 'Error when login.'});
+        res.status(500).json({'error': 'Error when login.'});
     }
 });
 
@@ -161,17 +161,17 @@ app.post('/signin', async (req, res) => {
             [user_id, name.trim(), lastname.trim(), birthdate.trim(), user.trim(), pass_hashed]
         );
 
-        res.json({message: 'User added.'});
+        res.json({'message': 'User added.'});
     } catch (error) {
         console.error(error);
         // Verificar si el error es por clave única duplicada
         if (error.code === '23505') {
-            res.status(400).json({ error: 'Username has already exist.' });
+            res.status(400).json({ 'error': 'Username has already exist.' });
         } else {
             console.error(error);
-            res.status(500).json({error: 'Error when added user.'});
+            res.status(500).json({'error': 'Error when added user.'});
         }
-        res.status(500).send({error: 'Error when added user.'});
+        res.status(500).json({'error': 'Error when added user.'});
     }
 });
 
