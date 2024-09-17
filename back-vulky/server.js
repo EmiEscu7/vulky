@@ -124,8 +124,9 @@ app.get('/crypt', (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { user, pass } = req.body;
+    console.log(`/login, user=${user}, pass=${pass}`)
     try {
-        if(!user || !pass) {
+        if(!user || !pass) {            
             res.status(500).send('Wold be put username and password');
         } else {
             const query = `SELECT u.* FROM USERS u WHERE username = '${user.trim()}'`;
