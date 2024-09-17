@@ -158,10 +158,10 @@ app.post('/signin', async (req, res) => {
         const user_id = uuidv4();
         await pool.query(
             'INSERT INTO USERS (id, name, lastname, birthdate, username, password, profile_pic) VALUES ($1, $2, $3, $4, $5, $6, null)',
-            [user_id, name, lastname, birthdate, user, password]
+            [user_id, name.trim(), lastname.trim(), birthdate.trim(), user.trim(), password.trim()]
         );
 
-        res.status(201).send('User addeded.');
+        res.status(201).json({'ok': true});
     } catch (error) {
         console.error(error);
         res.status(500).send('Error al agregar el registro');
