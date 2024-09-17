@@ -63,14 +63,14 @@ app.post('/users', async (req, res) => {
 app.get('/getPassesByUser', async (req, res) => {
     const userId = req.query.userId;
     try {
-        const query = 'SELECT p.* FROM PASSES p JOIN USERS u ON p.id_user = u.id';
+        const query = `SELECT p.* FROM PASSES p JOIN USERS u ON p.id_user = u.id WHERE u.id = ${userId}`;
         console.log(query)
         const result = await pool.query(query);
         res.header('Access-Control-Allow-Origin', '*');
         res.json(result.rows);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error obtaining user passwords ' + userId);
+        res.status(500).json({'error': 'Error obtaining user passwords ' + userId});
     }
 });
 
