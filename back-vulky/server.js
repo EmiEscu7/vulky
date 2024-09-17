@@ -148,9 +148,14 @@ app.post('/login', async (req, res) => {
                 const row = result.rows[0];
                 console.log('obtengo la row');
                 console.log(row);
+                console.log(row.password);
+                console.log(pass_hashed);
                 if(row.password.toUpperCase() == pass_hashed.toUpperCase()) {
+                    console.log('todo igual, retorno el json');
+                    
                     res.json({'userId': row.id});
                 } else {
+                    console.log('erro, contrase;a incorrecta');
                     res.status(500).send('Incorrect password.');
                 }
             }
