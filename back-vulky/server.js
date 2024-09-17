@@ -2,16 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import pkg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
-import https from 'https';
 import { cryptPass, decrypt, hashPass } from './cryption.js';
 import dotenv from 'dotenv';
 dotenv.config();
-
-const options = {
-    key: fs.readFileSync('./ssl/private.key'),
-    cert: fs.readFileSync('./ssl/certificate.crt')
-};
 
 const DB_HOST = process.env.DB_HOST;
 const DB_PORT = process.env.DB_PORT;
@@ -176,6 +169,6 @@ app.post('/signin', async (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-https.createServer(options, app).listen(port, () => {
+app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
