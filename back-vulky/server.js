@@ -63,9 +63,9 @@ app.post('/users', async (req, res) => {
 app.get('/getPassesByUser', async (req, res) => {
     const userId = req.query.userId;
     try {
-        const query = `SELECT p.* FROM PASSES p JOIN USERS u ON p.id_user = u.id WHERE u.id = ${userId}`;
+        const query = 'SELECT p.* FROM PASSES p JOIN USERS u ON p.id_user = u.id WHERE u.id = $1';
         console.log(query)
-        const result = await pool.query(query);
+        const result = await pool.query(query, [userId]);
         res.header('Access-Control-Allow-Origin', '*');
         res.json(result.rows);
     } catch (error) {
