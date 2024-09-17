@@ -135,13 +135,19 @@ app.post('/login', async (req, res) => {
             console.log(query);            
             const result = await pool.query(query);
             console.log("dsp de la query");
-            
+            console.log(result.rowCount);
             if(result.rowCount == 0) {
+                console.log('No se encontró el usuario: ' + user);
                 res.status(500).send('No se encontró el usuario: ' + user);
             } else {
+                console.log('antes de hashear la pass');
+                
                 const pass_hashed = hashPass(pass);
+                console.log('pass hasheada');
+                
                 const row = result.rows[0];
-
+                console.log('obtengo la row');
+                console.log(row);
                 if(row.password.toUpperCase() == pass_hashed.toUpperCase()) {
                     res.json({'userId': row.id});
                 } else {
