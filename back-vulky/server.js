@@ -161,7 +161,7 @@ app.post('/signin', async (req, res) => {
             [user_id, name.trim(), lastname.trim(), birthdate.trim(), user.trim(), password.trim()]
         );
 
-        res.status(200).json({message: 'User added.'});
+        res.json({message: 'User added.'});
     } catch (error) {
         console.error(error);
         // Verificar si el error es por clave única duplicada
