@@ -126,12 +126,16 @@ app.post('/login', async (req, res) => {
     const { user, pass } = req.body;
     console.log(`/login, user=${user}, pass=${pass}`)
     try {
+        console.log(!user || !pass)
         if(!user || !pass) {            
             res.status(500).send('Wold be put username and password');
         } else {
+            console.log('entro al else')
             const query = `SELECT u.* FROM USERS u WHERE username = '${user.trim()}'`;
             console.log(query);            
             const result = await pool.query(query);
+            console.log("dsp de la query");
+            
             if(result.rowCount == 0) {
                 res.status(500).send('No se encontró el usuario: ' + user);
             } else {
