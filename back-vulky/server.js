@@ -126,55 +126,39 @@ app.post('/login', async (req, res) => {
     const { user, pass } = req.body;
     console.log(`/login, user=${user}, pass=${pass}`)
     try {
-        console.log(!user || !pass)
         if(!user || !pass) {            
-            res.status(500).send('Wold be put username and password');
+            res.status(500).json({error: 'Wold be put username and password'});
         } else {
-            console.log('entro al else')
             const query = `SELECT u.* FROM USERS u WHERE username = '${user.trim()}'`;
-            console.log(query);            
             const result = await pool.query(query);
-            console.log("dsp de la query");
-            console.log(result.rowCount);
             if(result.rowCount == 0) {
-                console.log('No se encontró el usuario: ' + user);
-                res.status(500).send('No se encontró el usuario: ' + user);
+                res.status(500).json({error: 'No se encontró el usuario: ' + user});
             } else {
-                console.log('antes de hashear la pass');
-                
                 const pass_hashed = hashPass(pass);
-                console.log('pass hasheada');
-                
                 const row = result.rows[0];
-                console.log('obtengo la row');
-                console.log(row);
-                console.log(row.password);
-                console.log(pass_hashed);
                 if(row.password.toUpperCase() == pass_hashed.toUpperCase()) {
-                    console.log('todo igual, retorno el json');
-                    
                     res.json({'userId': row.id});
                 } else {
-                    console.log('erro, contrase;a incorrecta');
-                    res.status(500).send('Incorrect password.');
+                    res.status(500).json({error: 'Incorrect password.'});
                 }
             }
             
         }
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error when login.');
+        res.status(500).json({error: 'Error when login.'});
     }
 });
 
 app.post('/signin', async (req, res) => {
     const { user, password, birthdate, name, lastname } = req.body;
-    console.log(user, password, birthdate, name, lastname);
+    console.log(`/signin, user=${user}, pass=***, birthdate=${birthdate}, name=${name}, lastname=${lastname}`);
     try {
         const user_id = uuidv4();
+        const pass_hashed = hashPass(password.trim());
         await pool.query(
             'INSERT INTO USERS (id, name, lastname, birthdate, username, password, profile_pic) VALUES ($1, $2, $3, $4, $5, $6, null)',
-            [user_id, name.trim(), lastname.trim(), birthdate.trim(), user.trim(), password.trim()]
+            [user_id, name.trim(), lastname.trim(), birthdate.trim(), user.trim(), pass_hashed]
         );
 
         res.json({message: 'User added.'});
