@@ -3,6 +3,7 @@ import cors from 'cors';
 import pkg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 import { cryptPass, decrypt, hashPass } from './cryption.js';
+import morgan from 'morgan';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type'],
 }));
+app.use(morgan('combined'));
 app.disable('x-powered-by');
 
 // Ruta para obtener usuarios
