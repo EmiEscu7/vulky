@@ -34,8 +34,6 @@ app.use(cors({
     allowedHeaders: ['Content-Type'],
 }));
 app.use(morgan('combined'));
-// Ruta para servir archivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
 app.disable('x-powered-by');
 
 // Ruta para obtener usuarios
@@ -202,11 +200,6 @@ app.post('/deletePass', async (req, res) => {
     } catch (error) {
         res.status(500).json({'error': error});
     }
-});
-
-// Endpoint para devolver la guía de eliminación de cuenta
-app.get('/deleteAccountGuide', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'delete-account-guide.html'));
 });
 
 const port = process.env.PORT || 3000;
