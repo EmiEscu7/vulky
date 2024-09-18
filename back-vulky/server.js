@@ -202,6 +202,31 @@ app.post('/deletePass', async (req, res) => {
     }
 });
 
+app.get('/deleteAccount', async (req, res) => {
+    const username = req.query.username;
+    try {
+        const userId = await pool.query('SELECT id FROM USERS WHERE username = $1', [username]);
+        if(userId) {
+            await pool.query('DELETE FROM PASSES WHERE user_id = $1', [userId]);
+            await pool.query('DELETE FROM USERS WHERE ID = $1', [userId]);
+            res.json({'message': 'user was deleted.'});
+        } else {
+            res.status(500).json({'error': 'No user was found with the identifier ' + username});
+        }
+    } catch (error) {
+        res.status(500).json({'error': error});
+    }
+});
+
+app.get('/deletePass', async (req, res) => {
+    const passId = req.query.passId;
+    try {
+        await pool.query('DELETE FROM PASSES WHERE id = $1', [passId]);
+    } catch (error) {
+        res.status(500).json({'error': error});
+    }
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
