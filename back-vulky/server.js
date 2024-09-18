@@ -207,7 +207,7 @@ app.get('/deleteAccount', async (req, res) => {
     try {
         const userId = await pool.query('SELECT id FROM USERS WHERE username = $1', [username]);
         if(userId) {
-            await pool.query('DELETE FROM PASSES WHERE user_id = $1', [userId]);
+            await pool.query('DELETE FROM PASSES WHERE id_user = $1', [userId]);
             await pool.query('DELETE FROM USERS WHERE ID = $1', [userId]);
             res.json({'message': 'user was deleted.'});
         } else {
